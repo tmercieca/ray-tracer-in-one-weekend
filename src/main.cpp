@@ -16,6 +16,7 @@ int main() {
   const auto aspect_ratio = 16.0 / 9.0;
   const int image_Width = 256;
   const int image_height = static_cast<int>(image_Width / aspect_ratio);
+  const int samples_per_pixel = 100;
 
   // Camera
   auto viewport_height = 2.0;
@@ -35,11 +36,16 @@ int main() {
     std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
 
     for (int i = 0; i < image_Width; ++i) {
-      auto u = double(i) / (image_Width - 1);
-      auto v = double(j) / (image_height - 1);
-      ray r(origin, lower_left_corner + u * horizontal + v * vertical - origin);
-      color pixel_color = ray_color(r, world);
-      write_color(std::cout, pixel_color);
+      color pixel_color_cumulative(0, 0, 0);
+
+      for (int s = 0; s < samples_per_pixel; ++s) {
+        auto u = (i + random_unit()) / (image_Width - 1);
+        auto v = (j + random_unit()) / (image_height - 1);
+        ray r(origin, lower_left_corner + u * horizontal + v * vertical - origin);
+        pixel_color_cumulative += ray_color(r, world);
+      }
+
+      write_color(std::cout, pixel_color_cumulative * 1.0 / samples_per_pixel);
     }
   }
 
