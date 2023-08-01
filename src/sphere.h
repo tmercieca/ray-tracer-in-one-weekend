@@ -2,12 +2,17 @@
 #define SPHERE_H
 
 #include "hittable.h"
+#include "material.h"
 #include <cassert>
+#include <memory>
+
+using std::shared_ptr;
 
 class sphere : public hittable {
 public:
   sphere() {}
-  sphere(point3 c, double r) : center(c), radius(r){};
+  sphere(point3 c, double r, std::shared_ptr<material> m)
+      : center(c), radius(r), mat(m){};
 
   virtual bool hit(const ray &r, double t_min, double t_max,
                    hit_record &rec) const override;
@@ -15,6 +20,7 @@ public:
 public:
   point3 center;
   double radius;
+  shared_ptr<material> mat;
 };
 
 inline bool sphere::hit(const ray &r, double t_min, double t_max,
@@ -40,6 +46,7 @@ inline bool sphere::hit(const ray &r, double t_min, double t_max,
   record.t = root;
   record.p = r.at(record.t);
   record.normal = (record.p - center) / radius;
+  record.mat = mat;
 
   return true;
 }
