@@ -28,6 +28,7 @@ int main() {
   auto vertical = vec3(0, viewport_height, 0);
   auto lower_left_corner =
       origin - horizontal / 2 - vertical / 2 - vec3(0, 0, focal_length);
+  const int max_depth = 50;
 
   // Render
   std::cout << "P3\n" << image_Width << ' ' << image_height << "\n255\n";
@@ -42,10 +43,10 @@ int main() {
         auto u = (i + random_unit()) / (image_Width - 1);
         auto v = (j + random_unit()) / (image_height - 1);
         ray r(origin, lower_left_corner + u * horizontal + v * vertical - origin);
-        pixel_color_cumulative += ray_color(r, world);
+        pixel_color_cumulative += ray_color(r, world, max_depth);
       }
 
-      write_color(std::cout, pixel_color_cumulative * 1.0 / samples_per_pixel);
+      write_color(std::cout, gamma_correct(pixel_color_cumulative * 1.0 / samples_per_pixel));
     }
   }
 

@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <utilities.h>
 
 using std::sqrt;
 
@@ -85,5 +86,27 @@ inline vec3 cross(const vec3 &u, const vec3 &v) {
 }
 
 inline vec3 unit_vector(vec3 v) { return v / v.length(); }
+
+inline static vec3 random(double min, double max) {
+  return vec3(random_double(min, max), random_double(min, max),
+              random_double(min, max));
+}
+
+inline vec3 random_in_unit_sphere() {
+  while (true) {
+    auto p = random(-1, 1);
+    if (p.length_squared() >= 1)
+      continue;
+    return p;
+  }
+}
+
+inline vec3 random_in_hemisphere(const vec3& normal) {
+    vec3 in_unit_sphere = random_in_unit_sphere();
+    if (dot(in_unit_sphere, normal) > 0.0) // In the same hemisphere as the normal
+        return in_unit_sphere;
+    else
+        return -in_unit_sphere;
+}
 
 #endif
