@@ -16,4 +16,8 @@ inline double random_unit() {
   return random_double(0.0, 1.0);
 }
 
+inline double random_double() {
+  return rand() / (RAND_MAX + 1.0);
+}
+
 #endif
